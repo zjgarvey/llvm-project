@@ -88,6 +88,11 @@ struct DimOfReifyRankedShapedTypeOpInterface : public OpRewritePattern<OpTy> {
     std::optional<int64_t> dimIndex = dimOp.getConstantIndex();
     if (!dimIndex)
       return failure();
+    OperationName dimValueOperationName = dimValue.getOwner()->getName();
+    if (!dimValueOperationName
+             .hasInterface<ReifyRankedShapedTypeOpInterface>()) {
+      return failure();
+    }
 
     ReifiedRankedShapedTypeDims reifiedResultShapes;
     if (failed(reifyResultShapes(rewriter, dimValue.getOwner(),
